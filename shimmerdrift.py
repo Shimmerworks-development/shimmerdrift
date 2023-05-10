@@ -68,7 +68,7 @@ class Task:
         self.name = name
         self.description = description
 tasks = {
-    "arena": Task("arena", "Travel to the great arena"),
+    "arena": Task("arena", "Travel to the great arena and speak to Aphax"),
     "gear": Task("gear", "Travel to the town square and purchase some gear from the weaponsmith"),
     "archive": Task("archive", "Travel to the Grand Archive and research the Cataclysm"),
 }

@@ -19,6 +19,14 @@ location=''
 shards = 0
 
 
+
+
+
+
+        
+        
+
+
 def start_quest(quest):
     global task
     if quest in tasks:
@@ -36,7 +44,6 @@ def complete_quest():
     gap(1)
     task=''
 
-
 def gain_shards(amount):
     global shards
     if race=="dwarf":
@@ -52,8 +59,17 @@ def buy(item, cost):
         gap(1)
         print("------------------------")
         print(f"** -> You paid {cost} shards for {item} <- **")
-        rpint(f'** -> You have {shards} shards remaining <- **')
+        print(f'** -> You now have {shards} shards <- **')
         shards-=cost
+        if class_u == "rogue":
+            rogue_chance=random.randint(1, 5)
+            if rogue_chance == 1:
+                gap(1)
+                print(f"** -> You stole back {round(cost*0.1)} shards <- **")
+                shards+=round(cost*0.1)
+                print(f'** -> You now have {shards} shards <- **')
+                gap(1)
+
         gain_item(item, 1)
         print("------------------------")
         gap(1)
@@ -61,12 +77,13 @@ def buy(item, cost):
         gap(1)
         print("XX -> Not enough shards <- XX")
         gap(1)
-    
 
 class Task:
+
     def __init__(self, name, description):
         self.name = name
         self.description = description
+
 tasks = {
     "arena": Task("arena", "Travel to the great arena and speak to Aphax"),
     "gear": Task("gear", "Travel to the town square and purchase some gear from the weaponsmith"),
@@ -83,9 +100,9 @@ def wait():
 classes = {
     "warrior": {"ATK": 1, "HP": 9, "DESC":"Trained in combat, you are skilled with a blade and tough in the face of battle", "ABILITY":"+20% Damage when using a melee weapon"},
     "mage": {"ATK": 0, "HP": 8, "DESC":"Disciplined in the ways of sorcery, your intelligent use of magic strikes fear into the hearts of your enemies", "ABILITY":"-20% Mana cost for spells"},
-    "rogue": {"ATK": 2, "HP": 5, "DESC":"Your agility and cunning allows you to take out your foes with fierce consistency", "ABILITY":""},
-    "paladin": {"ATK": 1, "HP": 10, "DESC":"A warrior of the light, you are skilled in both combat and magic, and are a force to be reckoned with", "ABILITY":""},
-    "cleric": {"ATK": 0, "HP": 12, "DESC":"A healer of great power, capable of cleansing devastating wounds and restoring life to the fallen", "ABILITY":""},
+    "rogue": {"ATK": 2, "HP": 5, "DESC":"Your agility and cunning allows you to take out your foes with fierce consistency", "ABILITY":"chance to steal back 10% of shards spent when purchasing items"},
+    "paladin": {"ATK": 1, "HP": 10, "DESC":"A warrior of the light, you are skilled in both combat and magic, and are a force to be reckoned with", "ABILITY":"chance to blind enemy with a blast of light on melee or magic attack, meaning it is temporily unable to attack"},
+    "cleric": {"ATK": 0, "HP": 12, "DESC":"A healer of great power, capable of cleansing devastating wounds and restoring life to the fallen", "ABILITY":"has a chance to gain back hp equal to 20% of the melee damage dealt to an enemie"},
 }
 
 races = {
@@ -94,7 +111,6 @@ races = {
     "dwarf": {"ATK": 2, "HP": 30, "DESC":"The humble Dwarf, beings of great strength who live in the darkest depths of the realm", "ABILITY":"+25% More shards"},
     "halfling": {"ATK": 0, "HP": 26, "DESC":"The miniscule and nimble Halfling, they are skilled in the art of stealth and make adept pickpockets", "ABILITY":"Higher chance of escaping from a fight, gains a small amount of experience when escaping"},
     "dragonborn": {"ATK": 1, "HP": 24, "DESC":"The mighty Dragonborn, children of the great dragons of the realm, they are created with a great spark of draconic power", "ABILITY":"Critical hits 100% of the time"},
-
 }
 
 starting_gear = {
@@ -174,7 +190,7 @@ weapons = {
     "common dagger": Weapon("Common Dagger", "A miniscule blade, deals little to no damage, but a precise strike may deliver a killing blow", {"ATK": 3}, "none"),
     "common mage staff": Weapon("Common Mage Staff", "A long wooden stick with a blue jewel at it's head, it's magical properties make it a powerful tool and weapon alike", {"ATK": 3}, "none"),
     "common hammer": Weapon("Common Hammer", "A large hammer, it's weight makes it hard to wield, but it's destructive strike makes it a deadly weapon", {"ATK": 4}, "none"),
-    "uncommon dagger": Weapon("Uncommon Dagger", "A miniscule blade, deals little to no damage, but a precise strike may deliver a killing blow", {"ATK": 5}, "none"),
+    "uncommon dagger": Weapon("Uncommon Dagger", "A miniscule blade, deals little to no damage, but a precise strike may deliver a killing blow", {"ATK": 4}, "none"),
 }
 
 class Armor:
@@ -205,16 +221,16 @@ class Item:
         print(f"[Item - {self.name}: {self.description}]")
 
 items = {
-    "spellbook": Item("Spellbook", "A book containing the secrets of the arcane arts, it's pages are filled with spells that can be used to aid you in battle", {}, "none"),
-    "potion of healing": Item("Potion of Healing", "A small vial filled with a mysterious liquid, it's healing properties can restore your health", {"HP": 5},"heal5"),
-    "potion of mana": Item("Potion of Mana", "A small vial filled with a mysterious liquid, it's magical properties can restore your mana", {"MANA": 5},'mana5'),
-    "mysterious jewel": Item("Mysterious Jewel", "A small blue crystal bestowed upon you by the mysterious being, it can be used at any time", {}, "jewel"),
+    "spellbook": Item("Spellbook", "A book containing the secrets of the arcane arts, it's pages are filled with spells that can be used to aid you in battle or on your journey", {}, "none"),
+    "potion of healing": Item("Potion of Healing", "A small vial filled with a mysterious red liquid, it's healing properties can be used to restore your health", {"HP": 5},"heal5"),
+    "potion of mana": Item("Potion of Mana", "A small vial filled with a mysterious blue liquid, it's magical properties can be used to restore your mana", {"MANA": 5},'mana5'),
+    "mysterious jewel": Item("Mysterious Jewel", "A small blue crystal bestowed upon you by the mysterious being", {}, "none"),
 
     "common shortsword": Weapon("Common Shortsword", "A relativley short blade, but it's sharpness and weight make it a somewhat deadly weapon", {"ATK": 4}, "none"),
     "common dagger": Weapon("Common Dagger", "A miniscule blade, deals little to no damage, but a precise strike may deliver a killing blow", {"ATK": 3}, "none"),
     "common mage staff": Weapon("Common Mage Staff", "A long wooden stick with a blue jewel at it's head, it's magical properties make it a powerful tool and weapon alike", {"ATK": 3}, "none"),
     "common hammer": Weapon("Common Hammer", "A large hammer, it's weight makes it hard to wield, but it's destructive strike makes it a deadly weapon", {"ATK": 4}, "none"),
-    "uncommon dagger": Weapon("Uncommon Dagger", "A miniscule blade, deals little to no damage, but a precise strike may deliver a killing blow", {"ATK": 5}, "none"),
+    "uncommon dagger": Weapon("Uncommon Dagger", "A miniscule blade, deals little to no damage, but a precise strike may deliver a killing blow", {"ATK": 4}, "none"),
 
     "common silver robes": Armor("Common Silver Robes", "A set of robes made from the finest silver, they are light and flexible, but offer little protection", {"DEF": 1}, "none"),
     "common pearl robes": Armor("Common Pearl Robes", "A set of robes made from the whitest silk, offers extremley ranged movement, provides extremely little protection", {"DEF": 1}, "none"),
@@ -223,7 +239,8 @@ items = {
 }
 
 key_items = {
-    "mysterious jewel": Item("Mysterious Jewel", "A small blue crystal bestowed upon you by the mysterious being, it can be used at any time", {}, "jewel"),
+    "mysterious jewel": Item("Mysterious Jewel", "A small blue crystal bestowed upon you by the mysterious being, it can be used at any time", {}, "none"),
+    "spellbook": Item("Spellbook", "A book containing the secrets of the arcane arts, it's pages are filled with spells that can be used to aid you in battle or on your journey", {}, "none"),
 }
 
 def use(item):
@@ -413,6 +430,16 @@ def fight(enemy_name):
                         damage = round(damage*1.2)
                     enemy_hp -= damage
                     print(f"!! -> dealt {damage} damage to the {enemy_name} <- !!")
+                    if class_u == "paladin":
+                        blind_p = random.randint(1, 5)
+                            
+                    if class_u=="cleric":
+                        heal_c=random.randint(1, 5)
+                        if heal_c == 1:
+                            hp=hp+round(damage*0.2)
+                            if hp > max_hp:
+                                hp = max_hp
+                            print(f"++ -> gained back {round(damage*0.2)} hp <- ++")
                     if enemy_hp <= 0:
                         print(f"!! -> the {enemy_name} has been defeated <- !!")
                         gap(2)
@@ -431,17 +458,33 @@ def fight(enemy_name):
                         print(progress_bar)
                         wait()
                         break
-                    
-                    print(f"!! -> {enemy.amsg} <- !!")
-                    damage = random.randint(enemy.stats["ATK"], round(enemy.stats["ATK"]*1.7))
-                    if damage >= round(enemy.stats["ATK"]*1.5):
-                        print("!! -> CRITICAL HIT <- !!")
-                    hp -= damage
-                    print(f"!! -> the {enemy_name} dealt {damage} damage to you <- !!")
-                    if hp <= 0:
-                        print(f"!! -> you have been defeated by the {enemy_name} <- !!")
-                        print("☠︎︎☠︎︎ -> GAME OVER <- ☠︎︎☠︎︎")
-                        quit()
+                    if class_u == "paladin":
+                        blind_p = random.randint(1, 5)
+                        if blind_p == 1:
+                            print(f"!! -> blinded {enemy_name} the a flash of light <-!!")
+                        else:
+                            print(f"!! -> {enemy.amsg} <- !!")
+                            damage = random.randint(enemy.stats["ATK"], round(enemy.stats["ATK"]*1.7))
+                            if damage >= round(enemy.stats["ATK"]*1.5):
+                                print("!! -> CRITICAL HIT <- !!")
+                            hp -= damage
+                            print(f"!! -> the {enemy_name} dealt {damage} damage to you <- !!")
+                            if hp <= 0:
+                                print(f"!! -> you have been defeated by the {enemy_name} <- !!")
+                                print("☠︎︎☠︎︎ -> GAME OVER <- ☠︎︎☠︎︎")
+                                quit()
+                    else:
+                        print(f"!! -> {enemy.amsg} <- !!")
+                        damage = random.randint(enemy.stats["ATK"], round(enemy.stats["ATK"]*1.7))
+                        if damage >= round(enemy.stats["ATK"]*1.5):
+                            print("!! -> CRITICAL HIT <- !!")
+                        hp -= damage
+                        print(f"!! -> the {enemy_name} dealt {damage} damage to you <- !!")
+                        if hp <= 0:
+                            print(f"!! -> you have been defeated by the {enemy_name} <- !!")
+                            print("☠︎︎☠︎︎ -> GAME OVER <- ☠︎︎☠︎︎")
+                            quit()
+
                     wait()
                     gap(4)
             
@@ -710,6 +753,7 @@ def choose_class():
         print(classes[c]['DESC'])
         gap(1)
         print(f"[ ATK > +{classes[c]['ATK']} ] [ HP > +{classes[c]['HP']} ]")
+        print(f"[ ABILITY - {classes[c]['ABILITY']} ]")
         print("--------------------------------")
         gap(1)
         wait()
@@ -729,6 +773,8 @@ def choose_class():
         print(f'class chosen > {chosen_class}')
 
 def rest(length):
+
+
     global mana, max_mana, hp, max_hp
     print('ᶻ 𝗓 𐰁  resting  𐰁 𝗓 ᶻ')
     time_left=length
@@ -751,6 +797,52 @@ def rest(length):
     print('------------------------------------')
     gap(1)
 
+def view_inv():
+    print("-- INVENTORY -------------------------------")
+    gap(1)
+    print("[type an item name to view information or type 'exit' to exit inventory viewer]")
+    gap(1)
+    for item in inv:
+        print(item)
+    gap(1)
+    print("--------------------------------------------")
+    gap(1)
+    view_item=""
+    
+    while view_item != "exit":
+        view_item=input("item >")
+        if view_item=="exit":
+            pass
+        if view_item in inv:
+            if view_item in weapons:
+                print(f"-- {view_item} --------------------------")
+                print(f"item type: weapon")
+                print(f"damage modifier: +{weapons[view_item].stats['ATK']}")
+                print(weapons[view_item].description)
+                print(f"-----------------------------------------")
+            elif view_item in armor:
+                print(f"-- {view_item} --------------------------")
+                print(f"item type: armor")
+                print(f"defense modifier: +{armors[view_item].stats['DEF']}")
+                print(armors[view_item].description)
+                print(f"-----------------------------------------")
+            elif items[view_item].use != "none":
+                print(f"-- {view_item} --------------------------")
+                print(f"item type: usable")
+                print(items[view_item].description)
+                print(f"-----------------------------------------")
+            else:
+                print(f"-- {view_item} --------------------------")
+                print(f"item type: key item")
+                print(items[view_item].description)
+                print(f"-----------------------------------------")
+
+
+
+
+                    
+
+
 def continual_options():
     global action, inv, armor, weapon, j
     print('------------------------------------')
@@ -760,6 +852,7 @@ def continual_options():
     print('> check your self [check]')
     print('> switch armor/weapon [equip]')
     print('> use item [use]')
+    print('> view inventory [inv]')
     #if "omnimap" in inv:
         #print('> use omnimap [omni]')
     #else:
@@ -769,7 +862,7 @@ def continual_options():
     print('------------------------------------')
     gap(1)
     action=input('action >').lower()
-    while action not in ['rest','check','equip','use','omni','map','', ' ']:
+    while action not in ['rest','check','equip','use','omni','map','', ' ', 'inv']:
         action=input('action >').lower()
     if action == 'rest':
         rest(15)
@@ -806,14 +899,11 @@ def continual_options():
         #map()
     elif action == '' or action == ' ':
         j= 1
+    elif action == 'inv':
+        view_inv()
 
 def check():
     gap(4)
-    print(" - Inventory - ")
-    for item in inv:
-        print(f"{item}")
-    print(" -           - ")
-    wait()
     gap(1)
     if "spellbook" in inv:
         print(" - spellbook - ")
